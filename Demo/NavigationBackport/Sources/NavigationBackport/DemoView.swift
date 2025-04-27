@@ -61,7 +61,7 @@ enum AppPage: Hashable {
         case .yellow:
             return .green("Foo")
         case .green:
-            return .green("Bar")
+            return .purple(true)
         case .purple:
             return .orange
         case .orange:
@@ -69,6 +69,20 @@ enum AppPage: Hashable {
         case .pink:
             return nil
         }
+    }
+}
+
+struct BlueView: View {
+    @State var count: Int = 0
+    
+    var body: some View {
+        Text("Blue View: \(count)")
+            .padding()
+            .background(Color.cyan)
+            .cornerRadius(8)
+            .onTapGesture {
+                count += 1
+            }
     }
 }
 
@@ -80,10 +94,13 @@ struct PageView: View {
         VStack{
             
             Text("Current Page: \(page.colour.description)")
+                .padding()
+                .background(Color.white)
+                .cornerRadius(8)
             
-            .padding()
-            .background(Color.white)
-            .cornerRadius(8)
+            if case .blue = page {
+                BlueView()
+            }
             
             VStack {
                 Text("Path:")
