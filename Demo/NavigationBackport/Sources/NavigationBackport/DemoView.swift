@@ -189,5 +189,5 @@ struct PageView: View {
 }
 
 #Preview {
-    DemoView(useBackport: false)
+    DemoView(useBackport: true)
 }
