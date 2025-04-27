@@ -122,10 +122,26 @@ struct PageView: View {
             .cornerRadius(8)
             
             VStack {
-                Button("Go back to yellow") {
-                    path = [.red, .yellow(3)]
+                Text("Set path like: `path = [.yellow(3)]`")
+                Button("Go back to yellow (pop)") {
+                    path = [.yellow(3)]
                 }
                 .buttonStyle(.bordered)
+                Button("Go forward many yellow (push)") {
+                    path = [.red, .orange, .pink, .yellow(3)]
+                }
+                .buttonStyle(.bordered)
+                Button("Hybrid set (keep initial, new end)") {
+                    path = [.red, .blue, .pink, .yellow(3)]
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(8)
+            
+            VStack {
+                
                 if let nextPage = page.nextPage {
                     Button("Next") {
                         path.append(nextPage)
@@ -139,6 +155,10 @@ struct PageView: View {
                 }
                 Button("Previous") {
                     path.removeLast()
+                }
+                .buttonStyle(.bordered)
+                Button("Go to root") {
+                    path = []
                 }
                 .buttonStyle(.bordered)
             }
@@ -169,5 +189,5 @@ struct PageView: View {
 }
 
 #Preview {
-    DemoView(useBackport: true)
+    DemoView(useBackport: false)
 }
