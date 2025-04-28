@@ -5,7 +5,6 @@ final class Coordinator: ObservableObject {
 
     private weak var navController: UINavigationController?
     private var destinationBlocks: [DestinationBlock] = []
-    private var cache: [AnyHashable: UIViewController] = [:]
 
     func setup(_ controller: UINavigationController) {
         navController = controller
@@ -22,11 +21,19 @@ final class Coordinator: ObservableObject {
         return nil
     }
 
-    private func viewController(for value: AnyHashable) -> UIViewController? {
-        if let vc = cache[value] { return vc }
+    private func newViewController<Element: Hashable>(for value: Element) -> UIViewController? {
         guard let view = swiftUIView(for: value) else { return nil }
-        let vc = UIHostingController(rootView: view)
-        cache[value] = vc
+        return HostingController(rootView: view, element: value)
+    }
+    
+    private func viewControllerFromStack<Element: Hashable>(for value: Element) -> UIViewController? {
+        guard let nav = navController else { return nil }
+        let vcs = nav.viewControllers.compactMap { vc in
+            if let hostingVC = vc as? HostingController<Element> {
+                return hostingVC
+            }
+        }
+        let vc = vcs.first { $0.element == value }
         return vc
     }
 
@@ -35,7 +42,8 @@ final class Coordinator: ObservableObject {
         guard let nav = navController else { return }
 
         let currentQueue: [Path.Element] = nav.viewControllers.dropFirst().compactMap { vc in
-            cache.first { $0.value === vc }?.key as? Path.Element
+            guard let hostingVC = vc as? HostingController<Path.Element> else { return nil}
+            return hostingVC.element
         }
         let newQueue: [Path.Element] = Array(path)
 
@@ -47,16 +55,14 @@ final class Coordinator: ObservableObject {
             nav.popToRootViewController(animated: true)
 
         case .pop(let to):
-            if let targetVC = cache[AnyHashable(to)], nav.viewControllers.contains(targetVC) {
+            if let targetVC = viewControllerFromStack(for: to) {
                 nav.popToViewController(targetVC, animated: true)
-            } else {
-                replaceStack(newQueue, on: nav, animated: false)
             }
 
         case .push(let pages):
             for value in pages {
-                guard let vc = viewController(for: AnyHashable(value)) else { continue }
-                nav.pushViewController(vc, animated: true)
+                guard let vc = newViewController(for: value) else { continue }
+                nav.pushViewController(vc, animated: value == pages.last)
             }
 
         case .setPush:
@@ -81,17 +87,6 @@ final class Coordinator: ObservableObject {
                 nav.popViewController(animated: true)
             }
         }
-
-        purgeCache(keeping: newQueue)
-    }
-
-    // MARK: helpers
-    /// Remove any cached controller whose element is no longer present in the live queue.
-    private func purgeCache<Element: Hashable>(keeping active: [Element]) {
-        let activeSet = Set(active.map(AnyHashable.init))
-        cache.keys
-            .filter { !activeSet.contains($0) }
-            .forEach { cache.removeValue(forKey: $0) }
     }
 
 
@@ -117,3 +112,17 @@ final class Coordinator: ObservableObject {
     DemoView(useBackport: true)
 }
 
+class HostingController<Element: Hashable>: UIHostingController<AnyView> {
+
+    let element: Element
+    
+    init(rootView: AnyView, element: Element) {
+        self.element = element
+        super.init(rootView: AnyView(rootView))
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
