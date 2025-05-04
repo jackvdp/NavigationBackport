@@ -54,44 +54,10 @@ final class Coordinator: ObservableObject {
             setStackWithPopAnimation(newQueue, on: nav)
             
         case .hybridStackWithPushAnimation(let queueToKeep, let newQueue):
-            // Create a new stack that maintains the common prefix and adds the new suffix with push animation
-            let prefixViewControllers = queueToKeep.compactMap { value in
-                viewControllerFromStack(for: value, nav: nav) ?? newViewController(for: value)
-            }
-            
-            let newSuffixViewControllers = newQueue.compactMap { value in
-                newViewController(for: value)
-            }
-            
-            // Keep the root view controller (not part of the path)
-            if let rootVC = nav.viewControllers.first {
-                var fullStack = [rootVC]
-                fullStack.append(contentsOf: prefixViewControllers)
-                fullStack.append(contentsOf: newSuffixViewControllers)
-                nav.setViewControllers(fullStack, animated: true)
-            }
+            hybridStackWithPush(queueToKeep: queueToKeep, newQueue: newQueue, nav: nav)
             
         case .hybridStackWithPopAnimation(let queueToKeep, let newQueue):
-            // First, prepare a complete stack with all controllers
-            let prefixViewControllers = queueToKeep.compactMap { value in
-                viewControllerFromStack(for: value, nav: nav) ?? newViewController(for: value)
-            }
-            
-            let newSuffixViewControllers = newQueue.compactMap { value in
-                newViewController(for: value)
-            }
-            
-            // Keep the root view controller (not part of the path)
-            if let rootVC = nav.viewControllers.first {
-                var finalStack = [rootVC]
-                finalStack.append(contentsOf: prefixViewControllers)
-                finalStack.append(contentsOf: newSuffixViewControllers)
-                
-                // For pop animation, we temporarily add an extra controller that we'll pop from
-                let tempStack = finalStack + [nav.viewControllers.last].compactMap { $0 }
-                nav.setViewControllers(tempStack, animated: false)
-                nav.popViewController(animated: true)
-            }
+            hybridStackWithPop(queueToKeep: queueToKeep, newQueue: newQueue, nav: nav)
         }
     }
 
@@ -141,7 +107,48 @@ final class Coordinator: ObservableObject {
         nav.viewControllers.insert(contentsOf: newViewControllers, at: 1)
         nav.popViewController(animated: true)
     }
+    
+    private func hybridStackWithPush<Element: Hashable>(queueToKeep: [Element], newQueue: [Element], nav: UINavigationController) {
+        // Create a new stack that maintains the common prefix and adds the new suffix with push animation
+        let prefixViewControllers = queueToKeep.compactMap { value in
+            viewControllerFromStack(for: value, nav: nav) ?? newViewController(for: value)
+        }
         
+        let newSuffixViewControllers = newQueue.compactMap { value in
+            newViewController(for: value)
+        }
+        
+        // Keep the root view controller (not part of the path)
+        if let rootVC = nav.viewControllers.first {
+            var fullStack = [rootVC]
+            fullStack.append(contentsOf: prefixViewControllers)
+            fullStack.append(contentsOf: newSuffixViewControllers)
+            nav.setViewControllers(fullStack, animated: true)
+        }
+    }
+    
+    private func hybridStackWithPop<Element: Hashable>(queueToKeep: [Element], newQueue: [Element], nav: UINavigationController) {
+        // First, prepare a complete stack with all controllers
+        let prefixViewControllers = queueToKeep.compactMap { value in
+            viewControllerFromStack(for: value, nav: nav) ?? newViewController(for: value)
+        }
+        
+        let newSuffixViewControllers = newQueue.compactMap { value in
+            newViewController(for: value)
+        }
+        
+        // Keep the root view controller (not part of the path)
+        if let rootVC = nav.viewControllers.first {
+            var finalStack = [rootVC]
+            finalStack.append(contentsOf: prefixViewControllers)
+            finalStack.append(contentsOf: newSuffixViewControllers)
+            
+            // For pop animation, we temporarily add an extra controller that we'll pop from
+            let tempStack = finalStack + [nav.viewControllers.last].compactMap { $0 }
+            nav.setViewControllers(tempStack, animated: false)
+            nav.popViewController(animated: true)
+        }
+    }
 }
 
 #Preview {
