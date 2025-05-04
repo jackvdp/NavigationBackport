@@ -1,12 +1,12 @@
 struct QueueAnalyser {
 
     enum Result<Path> where Path: MutableCollection & RandomAccessCollection & RangeReplaceableCollection, Path.Element: Hashable {
-        case unchanged                     // identical arrays
-        case push(pagesToPush: Path)       // `old` is prefix of `new`; push the suffix
-        case pop(to: Path.Element)         // `new` is prefix of `old`; pop until *after* this element is visible
-        case popToRoot                     // `new` is empty; pop to root
-        case setPush                       // diverged but `new.count` > `old.count` – treat like a push animation
-        case setPop                        // diverged and shrinking – treat like a pop animation (or none)
+        case unchanged                      // identical arrays
+        case push(pagesToPush: Path)        // `old` is prefix of `new`; push the suffix
+        case pop(to: Path.Element)          // `new` is prefix of `old`; pop until *after* this element is visible
+        case popToRoot                      // `new` is empty; pop to root
+        case wholeNewStackWithPushAnimation // unrelated stack but `new.count` > `old.count` – treat like a push animation
+        case wholeNewStackWithPopAnimation  // unrelated stack and shrinking – treat like a pop animation
     }
 
     /// Decide which action brings `oldQueue` to `newQueue`.
@@ -37,6 +37,6 @@ struct QueueAnalyser {
         }
 
         // diverged – decide push–vs–pop by length
-        return newQueue.count > oldQueue.count ? .setPush : .setPop
+        return newQueue.count > oldQueue.count ? .wholeNewStackWithPushAnimation : .wholeNewStackWithPopAnimation
     }
 }

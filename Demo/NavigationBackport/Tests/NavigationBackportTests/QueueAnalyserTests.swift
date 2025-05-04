@@ -1,6 +1,8 @@
 import Testing
 @testable import NavigationBackport
 
+// MARK: - Simple push and pop
+
 @Test func shouldPushOneViewWhenOneAppended() async throws {
     let oldQueue = [1,2,3]
     let newQueue = [1,2,3,4]
@@ -52,6 +54,25 @@ import Testing
     }
 }
 
+@Test func shouldPushOneViewWhenOneAppendedWithDifferentType() async throws {
+    let oldQueue = ["one","two","three"]
+    let newQueue = ["one","two","three", "four"]
+    
+    let result = QueueAnalyser.analyse(
+        newQueue: newQueue,
+        oldQueue: oldQueue
+    )
+    
+    switch result {
+    case .push(let path):
+        #expect(path == ["four"])
+    default:
+        Issue.record()
+    }
+}
+
+// MARK: - Whole new stack
+
 @Test func shouldSetPopWhenHasDifferentQueues() async throws {
     let oldQueue = [2,3,4,5]
     let newQueue = [1,2,3]
@@ -62,7 +83,7 @@ import Testing
     )
     
     switch result {
-    case .setPop:
+    case .wholeNewStackWithPopAnimation:
         #expect(true)
     default:
         Issue.record()
@@ -79,25 +100,8 @@ import Testing
     )
     
     switch result {
-    case .setPush:
+    case .wholeNewStackWithPushAnimation:
         #expect(true)
-    default:
-        Issue.record()
-    }
-}
-
-@Test func shouldPushOneViewWhenOneAppendedWithDifferentType() async throws {
-    let oldQueue = ["one","two","three"]
-    let newQueue = ["one","two","three", "four"]
-    
-    let result = QueueAnalyser.analyse(
-        newQueue: newQueue,
-        oldQueue: oldQueue
-    )
-    
-    switch result {
-    case .push(let path):
-        #expect(path == ["four"])
     default:
         Issue.record()
     }
