@@ -36,7 +36,10 @@ Path.Element: Hashable {
             return
         }
         
-        let item = path?.wrappedValue.popLast()
+        if let path, !path.isEmpty {
+            path.wrappedValue.removeLast()
+        }
+        
         if navigationController.viewControllers.count > 1 {
             latestNavigationTrigger = .manual
         }
