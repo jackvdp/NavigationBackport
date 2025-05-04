@@ -119,7 +119,7 @@ import Testing
     )
     
     switch result {
-    case .hybridStackWithPopAnimation(let queeueToKeep, let newQueue):
+    case .hybridStackWithPushAnimation(let queeueToKeep, let newQueue):
         #expect(queeueToKeep == [1,2])
         #expect(newQueue == [4,5])
     default:
@@ -155,13 +155,10 @@ import Testing
     )
     
     switch result {
-    case .hybridStackWithPopAnimation(let queeueToKeep, let newQueue):
+    case .hybridStackWithPushAnimation(let queeueToKeep, let newQueue):
         #expect(queeueToKeep == [1,2])
         #expect(newQueue == [4,5])
     default:
         Issue.record("Got \(result)")
     }
 }
-    
-
-

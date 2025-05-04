@@ -25,20 +25,45 @@ struct QueueAnalyser {
             return .popToRoot
         }
 
-        // old ⊂ new  (push)
-        if oldQueue.count < newQueue.count, newQueue.starts(with: oldQueue) {
-            let suffix = Path(newQueue.dropFirst(oldQueue.count))
+        // Find the longest common prefix
+        var commonPrefixLength = 0
+        let minLength = min(newQueue.count, oldQueue.count)
+        
+        while commonPrefixLength < minLength {
+            let newIndex = newQueue.index(newQueue.startIndex, offsetBy: commonPrefixLength)
+            let oldIndex = oldQueue.index(oldQueue.startIndex, offsetBy: commonPrefixLength)
+            if newQueue[newIndex] != oldQueue[oldIndex] {
+                break
+            }
+            commonPrefixLength += 1
+        }
+        
+        // old ⊂ new (push) - old is exactly a prefix of new
+        if commonPrefixLength == oldQueue.count && commonPrefixLength < newQueue.count {
+            let suffix = Path(newQueue.dropFirst(commonPrefixLength))
             return .push(pagesToPush: suffix)
         }
-
-        // new ⊂ old  (pop)
-        if newQueue.count < oldQueue.count, oldQueue.starts(with: newQueue) {
+        
+        // new ⊂ old (pop) - new is exactly a prefix of old
+        if commonPrefixLength == newQueue.count && commonPrefixLength < oldQueue.count {
             if let last = newQueue.last {
                 return .pop(to: last)
             }
         }
-
-        // diverged – decide push–vs–pop by length
+        
+        // Hybrid case - common prefix but divergence
+        if commonPrefixLength > 0 && commonPrefixLength < min(newQueue.count, oldQueue.count) {
+            let commonPrefix = Path(newQueue.prefix(commonPrefixLength))
+            let newSuffix = Path(newQueue.dropFirst(commonPrefixLength))
+            
+            if newQueue.count >= oldQueue.count {
+                return .hybridStackWithPushAnimation(queueToKeep: commonPrefix, newQueue: newSuffix)
+            } else {
+                return .hybridStackWithPopAnimation(queueToKeep: commonPrefix, newQueue: newSuffix)
+            }
+        }
+        
+        // Completely different stacks - decide push vs pop by length
         return newQueue.count > oldQueue.count ? .wholeNewStackWithPushAnimation : .wholeNewStackWithPopAnimation
     }
 }
