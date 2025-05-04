@@ -7,6 +7,8 @@ struct QueueAnalyser {
         case popToRoot                      // `new` is empty; pop to root
         case wholeNewStackWithPushAnimation // unrelated stack but `new.count` > `old.count` – treat like a push animation
         case wholeNewStackWithPopAnimation  // unrelated stack and shrinking – treat like a pop animation
+        case hybridStackWithPushAnimation(queueToKeep: Path, newQueue: Path)   // related stack but `new.count` > `old.count` – treat like a push animation
+        case hybridStackWithPopAnimation(queueToKeep: Path, newQueue: Path)   // related stack but `new.count` < `old.count` – treat like a push animation
     }
 
     /// Decide which action brings `oldQueue` to `newQueue`.

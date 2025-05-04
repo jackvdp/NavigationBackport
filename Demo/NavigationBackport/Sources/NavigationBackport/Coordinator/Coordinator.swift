@@ -4,14 +4,14 @@ import SwiftUI
 final class Coordinator: ObservableObject {
 
     private weak var navController: UINavigationController?
-    private var destinationBlocks: [DestinationBlock] = []
+    private var destinationBlock: DestinationBlock?
 
     func setup(_ controller: UINavigationController) {
         navController = controller
     }
 
     func addDestinationBlock(_ block: @escaping DestinationBlock) {
-        destinationBlocks.append(block)
+        destinationBlock = block
     }
     
     // MARK: Synchronise navigation stack using QueueAnalyser
@@ -26,6 +26,7 @@ final class Coordinator: ObservableObject {
         let newQueue: [Path.Element] = Array(path)
 
         switch QueueAnalyser.analyse(newQueue: newQueue, oldQueue: currentQueue) {
+            
         case .unchanged:
             break
 
@@ -47,6 +48,12 @@ final class Coordinator: ObservableObject {
             setStackWithPushAnimation(newQueue, on: nav)
 
         case .wholeNewStackWithPopAnimation:
+            setStackWithPopAnimation(newQueue, on: nav)
+            
+        case .hybridStackWithPushAnimation:
+            break
+            
+        case .hybridStackWithPopAnimation:
             break
         }
     }
@@ -55,10 +62,9 @@ final class Coordinator: ObservableObject {
     // MARK: - View Creators & Getters
     
     private func createSwiftUIView(for value: Any) -> AnyView? {
-        for block in destinationBlocks.reversed() {
-            if let v = block(value) { return v }
-        }
-        return nil
+        guard let destinationBlock,
+              let v = destinationBlock(value) else { return nil }
+        return v
     }
 
     private func newViewController<Element: Hashable>(for value: Element) -> UIViewController? {
@@ -85,6 +91,20 @@ final class Coordinator: ObservableObject {
         }
         nav.setViewControllers(newViewControllers, animated: true)
     }
+    
+    private func setStackWithPopAnimation<Element: Hashable>(_ queue: [Element], on nav: UINavigationController) {
+        guard let first = nav.viewControllers.first, let last = nav.viewControllers.last else {
+            setStackWithPushAnimation(queue, on: nav)
+            return
+        }
+        nav.viewControllers = [first, last]
+        let newViewControllers = queue.compactMap { value in
+            newViewController(for: value)
+        }
+        nav.viewControllers.insert(contentsOf: newViewControllers, at: 1)
+        nav.popViewController(animated: true)
+    }
+        
 }
 
 #Preview {

@@ -107,3 +107,61 @@ import Testing
     }
 }
 
+// MARK: - Hybrid stack
+
+@Test func shouldSetHybridPushWhenHasDifferentButRelatedQueues() async throws {
+    let oldQueue = [1,2,3]
+    let newQueue = [1,2,4,5]
+    
+    let result = QueueAnalyser.analyse(
+        newQueue: newQueue,
+        oldQueue: oldQueue
+    )
+    
+    switch result {
+    case .hybridStackWithPopAnimation(let queeueToKeep, let newQueue):
+        #expect(queeueToKeep == [1,2])
+        #expect(newQueue == [4,5])
+    default:
+        Issue.record("Got \(result)")
+    }
+}
+
+@Test func shouldSetHybridPopWhenHasDifferentButRelatedQueues() async throws {
+    let oldQueue = [1,2,4,5]
+    let newQueue = [1,2,3]
+    
+    let result = QueueAnalyser.analyse(
+        newQueue: newQueue,
+        oldQueue: oldQueue
+    )
+    
+    switch result {
+    case .hybridStackWithPopAnimation(let queeueToKeep, let newQueue):
+        #expect(queeueToKeep == [1,2])
+        #expect(newQueue == [3])
+    default:
+        Issue.record("Got \(result)")
+    }
+}
+
+@Test func shouldSetHybridPushWhenHasDifferentButRelatedQueuesAndWithDuplicates() async throws {
+    let oldQueue = [1,2,3,2]
+    let newQueue = [1,2,4,5]
+    
+    let result = QueueAnalyser.analyse(
+        newQueue: newQueue,
+        oldQueue: oldQueue
+    )
+    
+    switch result {
+    case .hybridStackWithPopAnimation(let queeueToKeep, let newQueue):
+        #expect(queeueToKeep == [1,2])
+        #expect(newQueue == [4,5])
+    default:
+        Issue.record("Got \(result)")
+    }
+}
+    
+
+
