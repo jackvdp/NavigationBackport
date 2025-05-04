@@ -1,23 +1,58 @@
 import SwiftUI
 
+enum NavigationTrigger: Equatable {
+    case programmatic, manual, idle
+}
+
 @MainActor
-final class Coordinator: ObservableObject {
+final class Coordinator<Path>: NSObject, ObservableObject, UINavigationControllerDelegate where
+Path: MutableCollection & RandomAccessCollection & RangeReplaceableCollection,
+Path.Element: Hashable {
 
     private weak var navController: UINavigationController?
     private var destinationBlock: DestinationBlock?
+    private var latestNavigationTrigger: NavigationTrigger = .idle
+    var path: Binding<Path>?
 
-    func setup(_ controller: UINavigationController) {
+    func setup(_ controller: UINavigationController, path: Binding<Path>) {
         navController = controller
+        self.path = path
+        controller.delegate = self
     }
 
     func addDestinationBlock(_ block: @escaping DestinationBlock) {
         destinationBlock = block
     }
     
+    // MARK: - UINavigationControllerDelegate
+    
+    func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        guard latestNavigationTrigger != .programmatic  else {
+            latestNavigationTrigger = .idle
+            return
+        }
+        
+        let item = path?.wrappedValue.popLast()
+        if navigationController.viewControllers.count > 1 {
+            latestNavigationTrigger = .manual
+        }
+    }
+    
     // MARK: Synchronise navigation stack using QueueAnalyser
     
-    func sync<Path>(with path: Path) where Path: Collection, Path.Element: Hashable {
+    func sync(with path: Path) {
         guard let nav = navController else { return }
+        
+        guard latestNavigationTrigger != .manual  else {
+            latestNavigationTrigger = .idle
+            return
+        }
+        
+        latestNavigationTrigger = .programmatic
 
         let currentQueue: [Path.Element] = nav.viewControllers.dropFirst().compactMap { vc in
             guard let hostingVC = vc as? HostingController<Path.Element> else { return nil}
@@ -152,5 +187,5 @@ final class Coordinator: ObservableObject {
 }
 
 #Preview {
-    DemoView(useBackport: false)
+    DemoView(useBackport: true)
 }

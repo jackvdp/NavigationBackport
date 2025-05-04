@@ -34,7 +34,7 @@ private extension Backport where Content == Any {
         @Binding var path: Path
         let root: () -> Root
         
-        @StateObject private var coordinator = Coordinator()
+        @StateObject private var coordinator = Coordinator<Path>()
         
         init(path: Binding<Path>, @ViewBuilder root: @escaping () -> Root) {
             self._path = path
@@ -59,7 +59,7 @@ private extension Backport where Content == Any {
                 .navigationView(style: .stack),
                 on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18)
             ) { nav in
-                coordinator.setup(nav)
+                coordinator.setup(nav, path: $path)
             }
         }
         
