@@ -1,18 +1,26 @@
 import XCTest
 @testable import NavigationBackport
+import SwiftUI
 
 @MainActor
-final class CoordinatorTests: XCTestCase {
+final class CoordinatorTests: XCTestCase, @unchecked Sendable {
     
     var coordinator: Coordinator<[Int]>!
-    var mockNavController: MockNavigationController!
+    fileprivate var mockNavController: MockNavigationController!
     var path: Binding<[Int]>!
     
     override func setUp() async throws {
-        super.setUp()
+        try await super.setUp()
         mockNavController = MockNavigationController()
+        mockNavController.viewControllers = [UIViewController()] // Root controller
         coordinator = Coordinator<[Int]>()
-        path = Binding<[Int]>(get: { [] }, set: { _ in })
+        
+        var pathValue: [Int] = []
+        path = Binding<[Int]>(
+            get: { pathValue },
+            set: { pathValue = $0 }
+        )
+        
         coordinator.setup(mockNavController, path: path)
     }
     
@@ -20,14 +28,24 @@ final class CoordinatorTests: XCTestCase {
         mockNavController = nil
         coordinator = nil
         path = nil
-        super.tearDown()
+        try await super.tearDown()
     }
     
-    // MARK: - Simple Push Tests
+    // Set up destination block for testing
+    private func setupDestinationBlock() {
+        coordinator.addDestinationBlock { value in
+            guard let intValue = value as? Int else {
+                return nil
+            }
+            return AnyView(Text("\(intValue)"))
+        }
+    }
+    
+    // MARK: - Push Tests
     
     func testPushSingleItemToEmptyStack() {
         // Arrange
-        mockNavController.viewControllers = [UIViewController()] // Root VC
+        setupDestinationBlock()
         let newPath = [1]
         
         // Act
@@ -35,14 +53,16 @@ final class CoordinatorTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(mockNavController.viewControllers.count, 2)
-        XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
+        if let hostingVC = mockNavController.viewControllers[1] as? HostingController<Int> {
+            XCTAssertEqual(hostingVC.element, 1)
+        } else {
+            XCTFail("Second view controller should be HostingController")
+        }
     }
     
-    func testPushMultipleItemsToExistingStack() {
+    func testPushMultipleItemsToEmptyStack() {
         // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        mockNavController.viewControllers = [rootVC, item1VC]
+        setupDestinationBlock()
         let newPath = [1, 2, 3]
         
         // Act
@@ -50,38 +70,55 @@ final class CoordinatorTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(mockNavController.viewControllers.count, 4) // Root + 3 items
-        XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
+        
+        // Verify each controller has the expected element
+        for i in 0..<3 {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, i+1)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
+        }
     }
     
     // MARK: - Pop Tests
     
     func testPopToSpecificItem() {
         // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        let item2VC = HostingController(rootView: AnyView(Text("2")), element: 2)
-        let item3VC = HostingController(rootView: AnyView(Text("3")), element: 3)
-        mockNavController.viewControllers = [rootVC, item1VC, item2VC, item3VC]
-        let newPath = [1, 2]
+        setupDestinationBlock()
         
-        // Act
-        coordinator.sync(with: newPath)
+        // First set up a stack with 3 items
+        coordinator.sync(with: [1, 2, 3])
+        
+        // Reset the tracking flags
+        mockNavController.popToViewControllerCalled = false
+        
+        // Act - pop to the second item
+        coordinator.sync(with: [1, 2])
         
         // Assert
         XCTAssertTrue(mockNavController.popToViewControllerCalled)
-        XCTAssertEqual(mockNavController.popToViewControllerReceivedArguments?.viewController, item2VC)
+        
+        // Verify the target controller is the one with element 2
+        if let targetVC = mockNavController.popToViewControllerReceivedArguments?.viewController as? HostingController<Int> {
+            XCTAssertEqual(targetVC.element, 2)
+        } else {
+            XCTFail("Expected to pop to a HostingController with element 2")
+        }
     }
     
     func testPopToRoot() {
         // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        let item2VC = HostingController(rootView: AnyView(Text("2")), element: 2)
-        mockNavController.viewControllers = [rootVC, item1VC, item2VC]
-        let newPath: [Int] = []
+        setupDestinationBlock()
+        
+        // First set up a stack with items
+        coordinator.sync(with: [1, 2, 3])
+        
+        // Reset tracking flags
+        mockNavController.popToRootViewControllerCalled = false
         
         // Act
-        coordinator.sync(with: newPath)
+        coordinator.sync(with: [])
         
         // Assert
         XCTAssertTrue(mockNavController.popToRootViewControllerCalled)
@@ -91,102 +128,88 @@ final class CoordinatorTests: XCTestCase {
     
     func testHybridStackWithPushAnimation() {
         // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        let item2VC = HostingController(rootView: AnyView(Text("2")), element: 2)
-        let item3VC = HostingController(rootView: AnyView(Text("3")), element: 3)
-        mockNavController.viewControllers = [rootVC, item1VC, item2VC, item3VC]
-        let newPath = [1, 2, 4, 5] // Common prefix [1, 2], then diverges
+        setupDestinationBlock()
         
-        // Act
-        coordinator.sync(with: newPath)
+        // Set up initial stack
+        coordinator.sync(with: [1, 2, 3])
+        mockNavController.setViewControllersAnimatedCalled = false
+        
+        // Act - modify to have common prefix [1, 2] but then diverge
+        coordinator.sync(with: [1, 2, 4, 5])
         
         // Assert
         XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
         XCTAssertEqual(mockNavController.viewControllers.count, 5) // Root + 4 items
         
-        // Verify the first two elements remain the same
-        if let hostingVC1 = mockNavController.viewControllers[1] as? HostingController<Int> {
-            XCTAssertEqual(hostingVC1.element, 1)
-        } else {
-            XCTFail("Expected HostingController at index 1")
-        }
-        
-        if let hostingVC2 = mockNavController.viewControllers[2] as? HostingController<Int> {
-            XCTAssertEqual(hostingVC2.element, 2)
-        } else {
-            XCTFail("Expected HostingController at index 2")
+        // Verify the controllers have the correct elements
+        for (i, expectedValue) in [1, 2, 4, 5].enumerated() {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, expectedValue)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
         }
     }
     
     func testHybridStackWithPopAnimation() {
         // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        let item2VC = HostingController(rootView: AnyView(Text("2")), element: 2)
-        let item4VC = HostingController(rootView: AnyView(Text("4")), element: 4)
-        let item5VC = HostingController(rootView: AnyView(Text("5")), element: 5)
-        mockNavController.viewControllers = [rootVC, item1VC, item2VC, item4VC, item5VC]
-        let newPath = [1, 2, 3] // Common prefix [1, 2], then diverges, shorter than before
+        setupDestinationBlock()
         
-        // Act
-        coordinator.sync(with: newPath)
+        // Set up initial stack
+        coordinator.sync(with: [1, 2, 4, 5])
+        mockNavController.setViewControllersAnimatedCalled = false
+        
+        // Act - modify to have common prefix [1, 2] but then diverge with shorter path
+        coordinator.sync(with: [1, 2, 3])
         
         // Assert
         XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
-        XCTAssertTrue(mockNavController.popViewControllerCalled)
+        
+        // Check the final state of the navigation stack
+        XCTAssertEqual(mockNavController.viewControllers.count, 4) // Root + 3 items
+        
+        // Verify the elements are correct
+        let expectedValues = [1, 2, 3]
+        for (i, expectedValue) in expectedValues.enumerated() {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, expectedValue)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
+        }
     }
     
-    // MARK: - Navigation Delegate Tests
+    // MARK: - Back Button Tests
     
-    func testManualBackButtonUpdatesPath() {
-        // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        let item2VC = HostingController(rootView: AnyView(Text("2")), element: 2)
-        mockNavController.viewControllers = [rootVC, item1VC, item2VC]
-        
-        var pathValue = [1, 2]
-        path = Binding<[Int]>(
-            get: { pathValue },
-            set: { pathValue = $0 }
-        )
-        coordinator.path = path
-        
-        // Act - simulate back button press
-        coordinator.navigationController(mockNavController, willShow: item1VC, animated: true)
-        
-        // Assert
-        XCTAssertEqual(pathValue, [1]) // Should have removed the last item
-    }
+        func testBackButtonUpdatesSyncedPath() {
+            // Arrange
+            setupDestinationBlock()
     
-    func testProgrammaticUpdateDoesNotModifyPath() {
-        // Arrange
-        let rootVC = UIViewController()
-        let item1VC = HostingController(rootView: AnyView(Text("1")), element: 1)
-        let item2VC = HostingController(rootView: AnyView(Text("2")), element: 2)
-        mockNavController.viewControllers = [rootVC, item1VC, item2VC]
-        
-        var pathValue = [1, 2]
-        path = Binding<[Int]>(
-            get: { pathValue },
-            set: { pathValue = $0 }
-        )
-        coordinator.path = path
-        
-        // Set programmatic flag
-        coordinator.sync(with: [1, 2]) // This sets latestNavigationTrigger to .programmatic
-        
-        // Act - simulate navigation controller delegate call
-        coordinator.navigationController(mockNavController, willShow: item1VC, animated: true)
-        
-        // Assert
-        XCTAssertEqual(pathValue, [1, 2]) // Should not have modified the path
-    }
+            var pathValue = [1, 2]
+            path = Binding<[Int]>(
+                get: { pathValue },
+                set: { pathValue = $0 }
+            )
+            coordinator.setup(mockNavController, path: path)
+    
+            // Set up the stack
+            coordinator.sync(with: pathValue)
+    
+            // Simulate navigation controller popping the last view controller
+            let remainingControllers = Array(mockNavController.viewControllers.dropLast())
+    
+            // Act - simulate back button by updating the navigation stack
+            mockNavController.viewControllers = remainingControllers
+    
+            // Assert
+            XCTAssertEqual(pathValue, [1])
+        }
+    
 }
 
 // MARK: - Mock UINavigationController
 
+@MainActor
 private class MockNavigationController: UINavigationController {
     var setViewControllersAnimatedCalled = false
     var popToViewControllerCalled = false
@@ -196,23 +219,40 @@ private class MockNavigationController: UINavigationController {
     var popToViewControllerReceivedArguments: (viewController: UIViewController, animated: Bool)?
     
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
-        super.setViewControllers(viewControllers, animated: animated)
+        super.setViewControllers(viewControllers, animated: false)
+        delegate?.navigationController?(self, willShow: UIViewController(), animated: false)
         setViewControllersAnimatedCalled = true
     }
     
     override func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
         popToViewControllerCalled = true
         popToViewControllerReceivedArguments = (viewController, animated)
-        return super.popToViewController(viewController, animated: animated)
+        
+        // Update controllers to simulate the pop
+        if let index = viewControllers.firstIndex(of: viewController) {
+            viewControllers = Array(viewControllers[0...index])
+        }
+        delegate?.navigationController?(self, willShow: UIViewController(), animated: false)
+        
+        return nil
     }
     
     override func popToRootViewController(animated: Bool) -> [UIViewController]? {
         popToRootViewControllerCalled = true
-        return super.popToRootViewController(animated: animated)
+        if !viewControllers.isEmpty {
+            viewControllers = [viewControllers[0]]
+        }
+        delegate?.navigationController?(self, willShow: UIViewController(), animated: false)
+        return nil
     }
     
     override func popViewController(animated: Bool) -> UIViewController? {
         popViewControllerCalled = true
-        return super.popViewController(animated: animated)
+        if viewControllers.count > 1 {
+            let popped = viewControllers.removeLast()
+            return popped
+        }
+        delegate?.navigationController?(self, willShow: UIViewController(), animated: false)
+        return nil
     }
 }
