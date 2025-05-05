@@ -4,9 +4,19 @@ public extension Backport where Content: View {
     @MainActor @ViewBuilder
     func navigationDestination<D: Hashable, C: View>(
         for data: D.Type,
-        useBackport: Bool = false,
         @ViewBuilder destination: @escaping @MainActor (D) -> C
     ) -> some View {
+        content.modifier(NavigationDestinationBackported(data: data, destination: destination))
+    }
+}
+
+struct NavigationDestinationBackported<D: Hashable, C: View>: ViewModifier {
+    let data: D.Type
+    let destination: @MainActor (D) -> C
+    
+    @Environment(\.useBackport) private var useBackport
+    
+    func body(content: Content) -> some View {
         if #available(iOS 16.0, *), !useBackport {
             content.navigationDestination(for: data, destination: destination)
         } else {

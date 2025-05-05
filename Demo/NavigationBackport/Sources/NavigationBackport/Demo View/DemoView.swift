@@ -15,8 +15,7 @@ struct DemoView: View {
                     .buttonStyle(.bordered)
                 }
                 .backport.navigationDestination(
-                    for: AppPage.self,
-                    useBackport: useBackport
+                    for: AppPage.self
                 ) { page in
                     PageView(page: page, path: $path)
                 }
@@ -148,10 +147,10 @@ struct PageView: View {
                     }
                     .buttonStyle(.bordered)
                     
-//                    NavigationLink(value: nextPage) {
-//                        Text("Go to next page")
-//                    }
-//                    .buttonStyle(.bordered)
+                    Backport.NavigationLink(value: nextPage) {
+                        Text("Go to next page")
+                    }
+                    .buttonStyle(.bordered)
                 }
                 Button("Previous") {
                     path.removeLast()

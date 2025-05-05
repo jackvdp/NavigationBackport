@@ -21,6 +21,7 @@ public extension Backport where Content == Any {
                 SwiftUI.NavigationStack(path: path, root: root)
             } else {
                 NavigationStackBackported(path: path, root: root)
+                    .environment(\.useBackport, useOldNavigationStyle)
             }
         }
     }
@@ -55,6 +56,10 @@ private extension Backport where Content == Any {
             .onAppear {
                 coordinator.sync(with: path)
             }
+            .environment(\.appendValue, { value in
+                guard let typed = value as? Path.Element else { return }
+                path.append(typed)
+            })
             .introspect(
                 .navigationView(style: .stack),
                 on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18)
@@ -67,4 +72,28 @@ private extension Backport where Content == Any {
             path.map(\.hashValue).reduce(0, ^)
         }
     }
+}
+
+extension EnvironmentValues {
+    @Entry var appendValue: (AnyHashable) -> Void = { _ in }
+}
+
+#Preview {
+    Backport.NavigationStack(path: .constant(Array<String>()), useOldNavigationStyle: true) {
+//    NavigationView {
+        VStack(spacing: 50){
+            if #available(iOS 16.0, *) {
+                NavigationLink(value: 2) {
+                    Text("Navigation link")
+                }
+//                .buttonStyle(.borderedProminent)
+            }
+            
+            Backport.NavigationLink(value: 2) {
+                Text("Backport navigation link")
+            }
+//            .buttonStyle(.borderedProminent)
+        }
+    }
+    .navigationViewStyle(.stack)
 }
