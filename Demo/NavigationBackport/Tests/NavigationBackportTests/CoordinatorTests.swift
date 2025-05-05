@@ -205,6 +205,153 @@ final class CoordinatorTests: XCTestCase, @unchecked Sendable {
             XCTAssertEqual(pathValue, [1])
         }
     
+    // MARK: - Duplicate Element Tests
+
+    func testPathWithDuplicateElements() {
+        // Arrange
+        setupDestinationBlock()
+        let newPath = [1, 2, 2, 3] // Contains duplicate 2
+        
+        // Act
+        coordinator.sync(with: newPath)
+        
+        // Assert
+        XCTAssertEqual(mockNavController.viewControllers.count, 5) // Root + 4 items
+        
+        // Verify each controller has the expected element including duplicates
+        for (i, expectedValue) in [1, 2, 2, 3].enumerated() {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, expectedValue)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
+        }
+    }
+
+    func testNavigatingFromDuplicatesToUnique() {
+        // Arrange
+        setupDestinationBlock()
+        
+        // First set up a stack with duplicate elements
+        coordinator.sync(with: [1, 2, 2, 3])
+        mockNavController.setViewControllersAnimatedCalled = false
+        
+        // Act - change to path without duplicates
+        coordinator.sync(with: [1, 2, 3, 4])
+        
+        // Assert
+        XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
+        XCTAssertEqual(mockNavController.viewControllers.count, 5) // Root + 4 items
+        
+        // Verify the elements are correct
+        let expectedValues = [1, 2, 3, 4]
+        for (i, expectedValue) in expectedValues.enumerated() {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, expectedValue)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
+        }
+    }
+
+    func testNavigatingToPathWithDuplicatesAtEnd() {
+        // Arrange
+        setupDestinationBlock()
+        
+        // Set up initial stack
+        coordinator.sync(with: [1, 2, 3])
+        mockNavController.setViewControllersAnimatedCalled = false
+        
+        // Act - append duplicates at the end
+        coordinator.sync(with: [1, 2, 3, 3, 3])
+        
+        // Assert
+        XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
+        XCTAssertEqual(mockNavController.viewControllers.count, 6) // Root + 5 items
+        
+        // Verify the elements are correct
+        let expectedValues = [1, 2, 3, 3, 3]
+        for (i, expectedValue) in expectedValues.enumerated() {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, expectedValue)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
+        }
+    }
+
+    func testNavigatingToPathWithDuplicatesInMiddle() {
+        // Arrange
+        setupDestinationBlock()
+        
+        // Set up initial stack
+        coordinator.sync(with: [1, 2, 3, 4])
+        mockNavController.setViewControllersAnimatedCalled = false
+        
+        // Act - create duplicates in the middle
+        coordinator.sync(with: [1, 2, 2, 2, 4])
+        
+        // Assert
+        XCTAssertTrue(mockNavController.setViewControllersAnimatedCalled)
+        XCTAssertEqual(mockNavController.viewControllers.count, 6) // Root + 5 items
+        
+        // Verify the elements are correct
+        let expectedValues = [1, 2, 2, 2, 4]
+        for (i, expectedValue) in expectedValues.enumerated() {
+            if let hostingVC = mockNavController.viewControllers[i+1] as? HostingController<Int> {
+                XCTAssertEqual(hostingVC.element, expectedValue)
+            } else {
+                XCTFail("Expected HostingController at index \(i+1)")
+            }
+        }
+    }
+
+    func testPoppingFromPathWithDuplicates() {
+        // Arrange
+        setupDestinationBlock()
+        
+        // First set up a stack with duplicate elements
+        coordinator.sync(with: [1, 2, 2, 2, 3])
+        mockNavController.popToViewControllerCalled = false
+        
+        // Act - pop back to first instance of 2
+        coordinator.sync(with: [1, 2])
+        
+        // Assert
+        XCTAssertTrue(mockNavController.popToViewControllerCalled)
+        
+        // Verify we popped to the first instance of 2
+        if let targetVC = mockNavController.popToViewControllerReceivedArguments?.viewController as? HostingController<Int> {
+            XCTAssertEqual(targetVC.element, 2)
+            // Ideally we'd verify it's the first instance, but that's hard in this test framework
+        } else {
+            XCTFail("Expected to pop to a HostingController with element 2")
+        }
+    }
+
+    func testBackButtonWithDuplicateElements() {
+        // Arrange
+        setupDestinationBlock()
+        
+        var pathValue = [1, 2, 2, 3]
+        path = Binding<[Int]>(
+            get: { pathValue },
+            set: { pathValue = $0 }
+        )
+        coordinator.setup(mockNavController, path: path)
+        
+        // Set up the stack
+        coordinator.sync(with: pathValue)
+        
+        // Simulate navigation controller popping the last view controller
+        let remainingControllers = Array(mockNavController.viewControllers.dropLast())
+        
+        // Act - simulate back button by updating the navigation stack
+        mockNavController.viewControllers = remainingControllers
+        
+        // Assert
+        XCTAssertEqual(pathValue, [1, 2, 2])
+    }
 }
 
 // MARK: - Mock UINavigationController
