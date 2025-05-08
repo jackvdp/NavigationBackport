@@ -64,7 +64,3 @@ extension View {
         environment(\.coordinatorDestinationSetter, handler)
     }
 }
-
-#Preview {
-    DemoView()
-}

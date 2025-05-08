@@ -1,4 +1,5 @@
 import SwiftUI
+import NavigationBackport
 
 struct DemoView: View {
     var useBackport: Bool = true

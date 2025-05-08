@@ -188,7 +188,3 @@ Path.Element: Hashable {
         }
     }
 }
-
-#Preview {
-    DemoView(useBackport: true)
-}

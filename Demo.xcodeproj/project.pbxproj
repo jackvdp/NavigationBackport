@@ -10,7 +10,18 @@
 		C0893CB62DBC259000098B33 /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = C0893CB52DBC259000098B33 /* NavigationBackport */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C00852E52DCD564300411503 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C0893C982DBC05F200098B33 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0893C9F2DBC05F200098B33;
+			remoteInfo = Demo;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationBackportUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0893CA02DBC05F200098B33 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -25,6 +36,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C00852E02DCD564300411503 /* NavigationBackportUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NavigationBackportUITests;
+			sourceTree = "<group>";
+		};
 		C0893CA22DBC05F200098B33 /* Demo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -36,6 +52,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C00852DC2DCD564300411503 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0893C9D2DBC05F200098B33 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -51,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				C0893CA22DBC05F200098B33 /* Demo */,
+				C00852E02DCD564300411503 /* NavigationBackportUITests */,
 				C0893CB42DBC259000098B33 /* Frameworks */,
 				C0893CA12DBC05F200098B33 /* Products */,
 			);
@@ -60,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				C0893CA02DBC05F200098B33 /* Demo.app */,
+				C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -74,6 +99,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C00852DE2DCD564300411503 /* NavigationBackportUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C00852E72DCD564300411503 /* Build configuration list for PBXNativeTarget "NavigationBackportUITests" */;
+			buildPhases = (
+				C00852DB2DCD564300411503 /* Sources */,
+				C00852DC2DCD564300411503 /* Frameworks */,
+				C00852DD2DCD564300411503 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C00852E62DCD564300411503 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C00852E02DCD564300411503 /* NavigationBackportUITests */,
+			);
+			name = NavigationBackportUITests;
+			packageProductDependencies = (
+			);
+			productName = NavigationBackportUITests;
+			productReference = C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		C0893C9F2DBC05F200098B33 /* Demo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C0893CAF2DBC05F300098B33 /* Build configuration list for PBXNativeTarget "Demo" */;
@@ -107,6 +155,10 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					C00852DE2DCD564300411503 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = C0893C9F2DBC05F200098B33;
+					};
 					C0893C9F2DBC05F200098B33 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -127,11 +179,19 @@
 			projectRoot = "";
 			targets = (
 				C0893C9F2DBC05F200098B33 /* Demo */,
+				C00852DE2DCD564300411503 /* NavigationBackportUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C00852DD2DCD564300411503 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0893C9E2DBC05F200098B33 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,6 +202,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C00852DB2DCD564300411503 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0893C9C2DBC05F200098B33 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -151,7 +218,54 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C00852E62DCD564300411503 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0893C9F2DBC05F200098B33 /* Demo */;
+			targetProxy = C00852E52DCD564300411503 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		C00852E82DCD564300411503 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A4D4DKAPHN;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pumpy.NavigationBackportUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Demo;
+			};
+			name = Debug;
+		};
+		C00852E92DCD564300411503 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A4D4DKAPHN;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pumpy.NavigationBackportUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Demo;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		C0893CAD2DBC05F300098B33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -349,6 +463,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C00852E72DCD564300411503 /* Build configuration list for PBXNativeTarget "NavigationBackportUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C00852E82DCD564300411503 /* Debug */,
+				C00852E92DCD564300411503 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C0893C9B2DBC05F200098B33 /* Build configuration list for PBXProject "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
