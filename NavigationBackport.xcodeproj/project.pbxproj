@@ -22,16 +22,16 @@
 
 /* Begin PBXFileReference section */
 		C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationBackportUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0893CA02DBC05F200098B33 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0893CA02DBC05F200098B33 /* NavigationBackportApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NavigationBackportApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C0893CB32DBC221B00098B33 /* Exceptions for "Demo" folder in "Demo" target */ = {
+		C0893CB32DBC221B00098B33 /* Exceptions for "NavigationBackport" folder in "NavigationBackportApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				NavigationBackport,
 			);
-			target = C0893C9F2DBC05F200098B33 /* Demo */;
+			target = C0893C9F2DBC05F200098B33 /* NavigationBackportApp */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -41,12 +41,12 @@
 			path = NavigationBackportUITests;
 			sourceTree = "<group>";
 		};
-		C0893CA22DBC05F200098B33 /* Demo */ = {
+		C0893CA22DBC05F200098B33 /* NavigationBackport */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				C0893CB32DBC221B00098B33 /* Exceptions for "Demo" folder in "Demo" target */,
+				C0893CB32DBC221B00098B33 /* Exceptions for "NavigationBackport" folder in "NavigationBackportApp" target */,
 			);
-			path = Demo;
+			path = NavigationBackport;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -73,7 +73,7 @@
 		C0893C972DBC05F200098B33 = {
 			isa = PBXGroup;
 			children = (
-				C0893CA22DBC05F200098B33 /* Demo */,
+				C0893CA22DBC05F200098B33 /* NavigationBackport */,
 				C00852E02DCD564300411503 /* NavigationBackportUITests */,
 				C0893CB42DBC259000098B33 /* Frameworks */,
 				C0893CA12DBC05F200098B33 /* Products */,
@@ -83,7 +83,7 @@
 		C0893CA12DBC05F200098B33 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C0893CA02DBC05F200098B33 /* Demo.app */,
+				C0893CA02DBC05F200098B33 /* NavigationBackportApp.app */,
 				C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */,
 			);
 			name = Products;
@@ -122,9 +122,9 @@
 			productReference = C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		C0893C9F2DBC05F200098B33 /* Demo */ = {
+		C0893C9F2DBC05F200098B33 /* NavigationBackportApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C0893CAF2DBC05F300098B33 /* Build configuration list for PBXNativeTarget "Demo" */;
+			buildConfigurationList = C0893CAF2DBC05F300098B33 /* Build configuration list for PBXNativeTarget "NavigationBackportApp" */;
 			buildPhases = (
 				C0893C9C2DBC05F200098B33 /* Sources */,
 				C0893C9D2DBC05F200098B33 /* Frameworks */,
@@ -135,14 +135,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				C0893CA22DBC05F200098B33 /* Demo */,
+				C0893CA22DBC05F200098B33 /* NavigationBackport */,
 			);
-			name = Demo;
+			name = NavigationBackportApp;
 			packageProductDependencies = (
 				C0893CB52DBC259000098B33 /* NavigationBackport */,
 			);
 			productName = Demo;
-			productReference = C0893CA02DBC05F200098B33 /* Demo.app */;
+			productReference = C0893CA02DBC05F200098B33 /* NavigationBackportApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -164,7 +164,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C0893C9B2DBC05F200098B33 /* Build configuration list for PBXProject "Demo" */;
+			buildConfigurationList = C0893C9B2DBC05F200098B33 /* Build configuration list for PBXProject "NavigationBackport" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -178,7 +178,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C0893C9F2DBC05F200098B33 /* Demo */,
+				C0893C9F2DBC05F200098B33 /* NavigationBackportApp */,
 				C00852DE2DCD564300411503 /* NavigationBackportUITests */,
 			);
 		};
@@ -221,7 +221,7 @@
 /* Begin PBXTargetDependency section */
 		C00852E62DCD564300411503 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C0893C9F2DBC05F200098B33 /* Demo */;
+			target = C0893C9F2DBC05F200098B33 /* NavigationBackportApp */;
 			targetProxy = C00852E52DCD564300411503 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -385,10 +385,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Demo/Demo.entitlements;
+				CODE_SIGN_ENTITLEMENTS = NavigationBackport/NavigationBackport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Demo/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"NavigationBackport/Preview Content\"";
 				DEVELOPMENT_TEAM = A4D4DKAPHN;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -425,10 +425,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Demo/Demo.entitlements;
+				CODE_SIGN_ENTITLEMENTS = NavigationBackport/NavigationBackport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Demo/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"NavigationBackport/Preview Content\"";
 				DEVELOPMENT_TEAM = A4D4DKAPHN;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -472,7 +472,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C0893C9B2DBC05F200098B33 /* Build configuration list for PBXProject "Demo" */ = {
+		C0893C9B2DBC05F200098B33 /* Build configuration list for PBXProject "NavigationBackport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C0893CAD2DBC05F300098B33 /* Debug */,
@@ -481,7 +481,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C0893CAF2DBC05F300098B33 /* Build configuration list for PBXNativeTarget "Demo" */ = {
+		C0893CAF2DBC05F300098B33 /* Build configuration list for PBXNativeTarget "NavigationBackportApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C0893CB02DBC05F300098B33 /* Debug */,
