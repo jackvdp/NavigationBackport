@@ -15,7 +15,6 @@ final class NavigationBackportUITests: XCTestCase {
     @discardableResult
     private func openScenario(_ id: String, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
         let buttonId = "scenario_" + id
-        let list     = app.otherElements["scenarioList"]
         let button = app.buttons[buttonId]
         button.tap();
         return button

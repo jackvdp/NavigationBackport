@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "928B7E27-153F-4F9A-AA50-542E57DB1226",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:NavigationBackport.xcodeproj",
+      "identifier" : "C00852DE2DCD564300411503",
+      "name" : "NavigationBackportUITests"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:NavigationBackport.xcodeproj",
+        "identifier" : "C00852DE2DCD564300411503",
+        "name" : "NavigationBackportUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

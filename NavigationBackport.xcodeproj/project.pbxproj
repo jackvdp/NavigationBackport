@@ -21,6 +21,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C0005B3A2DCD6599004EF91D /* NavigationBackportApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationBackportApp.xctestplan; sourceTree = "<group>"; };
 		C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationBackportUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0893CA02DBC05F200098B33 /* NavigationBackportApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NavigationBackportApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -73,6 +74,7 @@
 		C0893C972DBC05F200098B33 = {
 			isa = PBXGroup;
 			children = (
+				C0005B3A2DCD6599004EF91D /* NavigationBackportApp.xctestplan */,
 				C0893CA22DBC05F200098B33 /* NavigationBackport */,
 				C00852E02DCD564300411503 /* NavigationBackportUITests */,
 				C0893CB42DBC259000098B33 /* Frameworks */,
@@ -238,11 +240,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pumpy.NavigationBackportUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Demo;
+				TEST_TARGET_NAME = NavigationBackportApp;
 			};
 			name = Debug;
 		};
@@ -257,11 +260,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pumpy.NavigationBackportUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Demo;
+				TEST_TARGET_NAME = NavigationBackportApp;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
