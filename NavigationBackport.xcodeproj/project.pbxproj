@@ -21,12 +21,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C0005B3A2DCD6599004EF91D /* NavigationBackportApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationBackportApp.xctestplan; sourceTree = "<group>"; };
 		C00852DF2DCD564300411503 /* NavigationBackportUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationBackportUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0893CA02DBC05F200098B33 /* NavigationBackportApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NavigationBackportApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C0005B3B2DCD66D2004EF91D /* Exceptions for "NavigationBackportUITests" folder in "NavigationBackportUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				NavigationBackportApp.xctestplan,
+			);
+			target = C00852DE2DCD564300411503 /* NavigationBackportUITests */;
+		};
 		C0893CB32DBC221B00098B33 /* Exceptions for "NavigationBackport" folder in "NavigationBackportApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -39,6 +45,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C00852E02DCD564300411503 /* NavigationBackportUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C0005B3B2DCD66D2004EF91D /* Exceptions for "NavigationBackportUITests" folder in "NavigationBackportUITests" target */,
+			);
 			path = NavigationBackportUITests;
 			sourceTree = "<group>";
 		};
@@ -74,7 +83,6 @@
 		C0893C972DBC05F200098B33 = {
 			isa = PBXGroup;
 			children = (
-				C0005B3A2DCD6599004EF91D /* NavigationBackportApp.xctestplan */,
 				C0893CA22DBC05F200098B33 /* NavigationBackport */,
 				C00852E02DCD564300411503 /* NavigationBackportUITests */,
 				C0893CB42DBC259000098B33 /* Frameworks */,

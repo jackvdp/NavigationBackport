@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:NavigationBackportApp.xctestplan"
+            reference = "container:NavigationBackportUITests/NavigationBackportApp.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

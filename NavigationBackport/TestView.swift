@@ -7,7 +7,7 @@ import NavigationBackport   // replace with your module name if different
 ///   without horizontal swipes.
 public struct TestView: View {
     /// Force the back‑port implementation.
-    public var forceBackport: Bool = true
+    public var forceBackport: Bool = false
     @State private var path: [AppPage] = []
 
     public init(forceBackport: Bool = true) { self.forceBackport = forceBackport }
@@ -34,10 +34,28 @@ public struct TestView: View {
                 Text("Root View")
                     .font(.title)
                     .accessibilityIdentifier("rootLabel")
+                
+                Text("PathCount: \(path.count)")
+                    .accessibilityIdentifier("pathCountLabel")
 
                 Button("Go red") { path.append(.red) }
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("goRedButton")
+
+                Button("Forward many") {
+                    path = [.red, .orange, .pink, .yellow(3)]
+                }
+                .accessibilityIdentifier("goForwardManyButton")
+
+                Button("Back to yellow") {
+                    path = [.yellow(3)]
+                }
+                .accessibilityIdentifier("goBackToYellowButton")
+
+                Button("Hybrid path set") {
+                    path = [.red, .blue, .pink, .yellow(3)]
+                }
+                .accessibilityIdentifier("hybridSetButton")
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
@@ -57,7 +75,11 @@ public struct TestView: View {
             ("1245",    "Path 1‑2‑4‑5",         [.red, .blue, .green("A"), .purple(false)]),
             ("12dup3",  "Duplicates mid",       [.red, .blue, .blue, .yellow(1)]),
             ("12dup",   "Duplicates at end",    [.red, .blue, .yellow(1), .yellow(1), .yellow(1)]),
-            ("1dup2224","Duplicates triple",    [.red, .blue, .blue, .blue, .green("A")])
+            ("1dup2224","Duplicates triple",    [.red, .blue, .blue, .blue, .green("A")]),
+            ("forwardMany", "Forward many yellow", [.red, .orange, .pink, .yellow(3)]),
+            ("1234567", "Path 1–2–3–4–5–6–7", [.red, .blue, .yellow(1), .green("A"), .purple(false), .orange, .pink]),
+            ("hybridSet", "Hybrid path", [.red, .blue, .pink, .yellow(3)])
+
         ]
 
         private let columns = [GridItem(.adaptive(minimum: 140), spacing: 12)]

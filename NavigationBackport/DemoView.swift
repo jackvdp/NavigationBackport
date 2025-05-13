@@ -130,6 +130,7 @@ struct PageView: View {
                 Button("Go forward many yellow (push)") {
                     path = [.red, .orange, .pink, .yellow(3)]
                 }
+                .accessibilityIdentifier("goForwardManyButton")
                 .buttonStyle(.bordered)
                 Button("Hybrid set (keep initial, new end)") {
                     path = [.red, .blue, .pink, .yellow(3)]

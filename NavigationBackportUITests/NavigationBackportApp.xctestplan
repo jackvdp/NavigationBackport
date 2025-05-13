@@ -22,6 +22,13 @@
         "identifier" : "C00852DE2DCD564300411503",
         "name" : "NavigationBackportUITests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:NavigationBackport\/NavigationBackport",
+        "identifier" : "NavigationBackportTests",
+        "name" : "NavigationBackportTests"
+      }
     }
   ],
   "version" : 1

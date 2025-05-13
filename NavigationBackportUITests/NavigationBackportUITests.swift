@@ -79,4 +79,56 @@ final class NavigationBackportUITests: XCTestCase {
         app.buttons["previousButton"].tap()
         XCTAssertEqual(label("blueCounterLabel").label, "Blue View: 0")
     }
+    
+    func testBlueCounterPreservedAfterHybridSet() {
+        openScenario("123") // [.red, .blue, .yellow(1)]
+
+        // Pop from yellow(1) to reveal blue
+        app.buttons["previousButton"].tap()
+
+        // Tap to increment blue counter
+        let counter = label("blueCounterLabel")
+        counter.tap()
+        XCTAssertEqual(counter.label, "Blue View: 1")
+
+        // Trigger hybrid set which retains same [.red, .blue] prefix
+        openScenario("hybridSet") // [.red, .blue, .pink, .yellow(3)]
+        
+        app.buttons["previousButton"].tap()
+        app.buttons["previousButton"].tap()
+
+        // We're still on .blue after hybrid set
+        XCTAssertTrue(app.staticTexts["Current Page: blue"].exists)
+
+        // Check that blue counter is preserved
+        XCTAssertEqual(label("blueCounterLabel").label, "Blue View: 1")
+    }
+
+    
+    func testDeepNavigationPushToEnd() {
+        openScenario("1234567") // Assumes path will be [.red, .blue, .yellow(2), .green("Foo"), .purple(true), .orange, .pink]
+        XCTAssertEqual(label("pathCountLabel").label, "PathCount: 7")
+        XCTAssertTrue(app.staticTexts["Current Page: pink"].exists)
+    }
+
+    func testHybridSetAndBackNavigation() {
+        openScenario("hybridSet") // scenario sets [.red, .blue, .pink, .yellow(3)]
+        XCTAssertEqual(label("pathCountLabel").label, "PathCount: 4")
+        app.buttons["previousButton"].tap()
+        XCTAssertTrue(app.staticTexts["Current Page: pink"].exists)
+        app.buttons["previousButton"].tap()
+        XCTAssertTrue(app.staticTexts["Current Page: blue"].exists)
+        app.buttons["goRootButton"].tap()
+        XCTAssertTrue(app.staticTexts["rootLabel"].exists)
+    }
+
+    func testRepeatedPopBeyondRootDoesNotCrash() {
+        openScenario("123")
+        app.buttons["previousButton"].tap() // pop to 2
+        app.buttons["previousButton"].tap() // pop to 1
+        app.buttons["previousButton"].tap() // pop to 0
+        XCTAssertTrue(app.staticTexts["rootLabel"].exists)
+        XCTAssertEqual(label("pathCountLabel").label, "PathCount: 0")
+    }
+
 }
