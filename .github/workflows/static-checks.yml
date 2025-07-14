@@ -33,4 +33,5 @@ jobs:
     - name: Run Tests on iPhone 16 Pro Simulator (iOS 18.0)
       run: |
         xcodebuild test \
+          -scheme 'NavigationBackportApp' \
           -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.0'
