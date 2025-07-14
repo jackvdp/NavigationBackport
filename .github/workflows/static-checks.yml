@@ -29,9 +29,9 @@ jobs:
     - name: Install Dependencies
       run: cd NavigationBackport/NavigationBackport && swift package resolve && cd ../..
 
-    # Run tests on iPhone 16 Pro Simulator with iOS 18.0
-    - name: Run Tests on iPhone 16 Pro Simulator (iOS 18.0)
+    # Run tests on iPhone 16 Pro Simulator with iOS 18.1
+    - name: Run Tests on iPhone 16 Pro Simulator (iOS 18.1)
       run: |
         xcodebuild test \
           -scheme 'NavigationBackportApp' \
-          -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.0'
+          -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.1'
